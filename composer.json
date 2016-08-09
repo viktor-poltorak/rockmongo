@@ -1,0 +1,6 @@
+{
+    "require": {
+        "mongodb/mongodb": "^1.0.0",
+        "alcaeus/mongo-php-adapter": "^1.0"
+    }
+}
