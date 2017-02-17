@@ -64,32 +64,28 @@ class AdminController extends BaseController
         $this->tableUrl = $this->path("collection.index");
         $this->showDbSelector = false;
 
-        try {
-            //add collection count
-            foreach ($this->dbs as $index => $db) {
-                $collectionCount = count(MDb::listCollections($this->_mongo->selectDB($db["name"])));
-                $db["collectionCount"] = $collectionCount;
-                if (isset($db["sizeOnDisk"])) {
-                    $db["size"] = round($db["sizeOnDisk"] / 1024 / 1024, 2); //M
-                }
-                $this->dbs[$index] = $db;
+        //add collection count
+        foreach ($this->dbs as $index => $db) {
+            $collectionCount = count(MDb::listCollections($this->_mongo->selectDB($db["name"])));
+            $db["collectionCount"] = $collectionCount;
+            if (isset($db["sizeOnDisk"])) {
+                $db["size"] = round($db["sizeOnDisk"] / 1024 / 1024, 2); //M
             }
-
-            //current db
-            $db = x("db");
-
-            $this->tables = array();
-            if ($db) {
-                $mongodb = $this->_mongo->selectDB($db);
-                $tables = MDb::listCollections($mongodb);
-                foreach ($tables as $table) {
-                    $this->tables[$table->getName()] = $table->count();
-                }
-            }
-            $this->display();
-        } catch (\Exception $e) {
-            var_dump($e);
+            $this->dbs[$index] = $db;
         }
+
+        //current db
+        $db = x("db");
+
+        $this->tables = array();
+        if ($db) {
+            $mongodb = $this->_mongo->selectDB($db);
+            $tables = MDb::listCollections($mongodb);
+            foreach ($tables as $table) {
+                $this->tables[$table->getName()] = $table->count();
+            }
+        }
+        $this->display();
     }
 
     /** about project and us * */
