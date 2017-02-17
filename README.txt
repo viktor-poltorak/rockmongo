@@ -21,6 +21,14 @@ Upgrade from old version
 1.Copy all files excluding config.php to your old version directory
 2.Done!
 
+Use for MongoDb 3 or higher
+--------------------------------------
+$MONGO["servers"][$i]["mongo_auth"] = true;
+$MONGO["servers"][$i]["mongo_db"] = false; //For now it will not used
+$MONGO["servers"][$i]["mongo_user"] = "root";
+$MONGO["servers"][$i]["mongo_pass"] = "root password";
+$MONGO["servers"][$i]["mongo_version"] = "3.4";
+
 
 Contributors
 --------------------------------------

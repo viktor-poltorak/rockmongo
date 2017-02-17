@@ -370,7 +370,7 @@ class MServer
 
                 if (intval($this->_mongoVersion) >= 3) {
                     if($this->_mongoUser && $this->_mongoPass) {
-                        $server = sprintf("%s:%s@%s/%s", $this->_mongoUser, $this->_mongoPass, $server, $db);
+                        $server = sprintf("%s:%s@%s", $this->_mongoUser, $this->_mongoPass, $server);
                         unset($options['username']);
                         unset($options['password']);
                     }
