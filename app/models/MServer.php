@@ -227,7 +227,6 @@ class MServer
         $this->_mongoVersion = $_mongoVersion;
     }
 
-
     public function uiOnlyDbs()
     {
         if (empty($this->_uiOnlyDbs)) {
@@ -362,15 +361,18 @@ class MServer
                 //Use credentials from config if it possible
                 if ($this->_mongoUser) {
                     $options["username"] = $this->_mongoUser;
-
                 }
                 if ($this->_mongoPass) {
                     $options["password"] = $this->_mongoPass;
                 }
 
                 if (intval($this->_mongoVersion) >= 3) {
-                    if($this->_mongoUser && $this->_mongoPass) {
+                    if ($this->_mongoUser && $this->_mongoPass) {
                         $server = sprintf("%s:%s@%s", $this->_mongoUser, $this->_mongoPass, $server);
+
+                        if($this->_mongoDb) {
+                            $server .= "/{$this->_mongoDb}";
+                        }
                         unset($options['username']);
                         unset($options['password']);
                     }

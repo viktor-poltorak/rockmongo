@@ -2,93 +2,120 @@
 
 import("classes.BaseController");
 
-class AdminController extends BaseController {
-	/** admin page **/
-	public function doIndex() {
-		$this->topUrl = $this->path("admin.top");
-		$this->leftUrl = $this->path("admin.dbs");
-		$this->rightUrl = $this->path("server.index");
+class AdminController extends BaseController
+{
 
-		$this->display();
-	}
+    /** admin page * */
+    public function doIndex()
+    {
+        $this->topUrl = $this->path("admin.top");
+        $this->leftUrl = $this->path("admin.dbs");
+        $this->rightUrl = $this->path("server.index");
 
-	/** top frame **/
-	public function doTop() {
-		$this->logoutUrl = $this->path("logout.index");
-		$this->admin = $this->_admin->username();
+        $this->display();
+    }
 
-		$this->servers = $this->_admin->servers();
-		$this->serverIndex = $this->_admin->hostIndex();
+    /** top frame * */
+    public function doTop()
+    {
+        $this->logoutUrl = $this->path("logout.index");
+        $this->admin = $this->_admin->username();
 
-		$isMasterRet =  null;
-		try {
-			$isMasterRet = $this->_mongo->selectDB($this->_admin->defaultDb())->command(array( "isMaster" => 1 ));
-			if ($isMasterRet["ok"]) {
-				$this->isMaster = $isMasterRet["ismaster"];
-			}
-			else {
-				$this->isMaster = true;
-			}
-		} catch (MongoCursorException $e) {
-			$this->isMaster = null;
-		}
+        $this->servers = $this->_admin->servers();
+        $this->serverIndex = $this->_admin->hostIndex();
 
-		$this->display();
-	}
+        $isMasterRet = null;
+        try {
+            $isMasterRet = $this->_mongo->selectDB($this->_admin->defaultDb())->command(array("isMaster" => 1));
+            if ($isMasterRet["ok"]) {
+                $this->isMaster = $isMasterRet["ismaster"];
+            } else {
+                $this->isMaster = true;
+            }
+        } catch (MongoCursorException $e) {
+            $this->isMaster = null;
+        }
 
-	/** show dbs in left frame **/
-	public function doDbs() {
-		$dbs = $this->_server->listDbs();
-		$this->dbs = array_values(rock_array_sort($dbs["databases"], "name"));
-		$this->baseUrl = $this->path("admin.dbs");
-		$this->tableUrl = $this->path("collection.index");
-		$this->showDbSelector = false;
+        $this->display();
+    }
 
-		//add collection count
-		foreach ($this->dbs as $index => $db) {
-			$collectionCount = count(MDb::listCollections($this->_mongo->selectDB($db["name"])));
-			$db["collectionCount"] = $collectionCount;
-			if (isset($db["sizeOnDisk"])) {
-				$db["size"] = round($db["sizeOnDisk"]/1024/1024, 2);//M
-			}
-			$this->dbs[$index] = $db;
-		}
+    /** show dbs in left frame * */
+    public function doDbs()
+    {
+        $selectedDb = $this->_server->mongoDb();
 
-		//current db
-		$db = x("db");
+        //Hack for not root users
+        if ($selectedDb) {
+            $dbs = [
+                'databases' => [
+                    [
+                        'name' => $selectedDb,
+                        'empty' => false,
+                        'sizeOnDisk' => '0',
+                    ],
+                ],
+            ];
+        } else {
+            $dbs = $this->_server->listDbs();
+        }
 
-		$this->tables = array();
-		if ($db) {
-			$mongodb = $this->_mongo->selectDB($db);
-			$tables = MDb::listCollections($mongodb);
-			foreach ($tables as $table) {
-				$this->tables[$table->getName()] = $table->count();
-			}
-		}
-		$this->display();
-	}
+        $this->dbs = array_values(rock_array_sort($dbs["databases"], "name"));
+        $this->baseUrl = $this->path("admin.dbs");
+        $this->tableUrl = $this->path("collection.index");
+        $this->showDbSelector = false;
 
-	/** about project and us **/
-	public function doAbout() {
-		$this->display();
-	}
+        try {
+            //add collection count
+            foreach ($this->dbs as $index => $db) {
+                $collectionCount = count(MDb::listCollections($this->_mongo->selectDB($db["name"])));
+                $db["collectionCount"] = $collectionCount;
+                if (isset($db["sizeOnDisk"])) {
+                    $db["size"] = round($db["sizeOnDisk"] / 1024 / 1024, 2); //M
+                }
+                $this->dbs[$index] = $db;
+            }
 
-	/** change current host **/
-	public function doChangeHost() {
-		$index = xi("index");
-		MUser::userInSession()->changeHost($index);
-		$this->redirect("admin.index", array( "host" => $index ));
-	}
+            //current db
+            $db = x("db");
 
-	/**
-	 * change language of UI interface
-	 *
-	 */
-	public function doChangeLang() {
-		setcookie("ROCK_LANG", x("lang"), time() + 365 * 86400);
-		header("location:index.php");
-	}
+            $this->tables = array();
+            if ($db) {
+                $mongodb = $this->_mongo->selectDB($db);
+                $tables = MDb::listCollections($mongodb);
+                foreach ($tables as $table) {
+                    $this->tables[$table->getName()] = $table->count();
+                }
+            }
+            $this->display();
+        } catch (\Exception $e) {
+            var_dump($e);
+        }
+    }
+
+    /** about project and us * */
+    public function doAbout()
+    {
+        $this->display();
+    }
+
+    /** change current host * */
+    public function doChangeHost()
+    {
+        $index = xi("index");
+        MUser::userInSession()->changeHost($index);
+        $this->redirect("admin.index", array("host" => $index));
+    }
+
+    /**
+     * change language of UI interface
+     *
+     */
+    public function doChangeLang()
+    {
+        setcookie("ROCK_LANG", x("lang"), time() + 365 * 86400);
+        header("location:index.php");
+    }
+
 }
-
 
 ?>

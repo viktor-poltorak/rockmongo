@@ -36,7 +36,7 @@ class DbController extends BaseController
         if (isset($ret["indexSize"])) {
             $ret["indexSize"] = r_human_bytes($ret["indexSize"]);
         }
-
+        $ret['empty'] = $ret['empty'] ?? false;
 
         $this->stats = array();
         $this->stats["Size"] = $ret["diskSize"];
