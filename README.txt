@@ -24,7 +24,7 @@ Upgrade from old version
 Use for MongoDb 3 or higher
 --------------------------------------
 $MONGO["servers"][$i]["mongo_auth"] = true;
-$MONGO["servers"][$i]["mongo_db"] = false; //For now it will not used
+$MONGO["servers"][$i]["mongo_db"] = false; //required if you use not root user
 $MONGO["servers"][$i]["mongo_user"] = "root";
 $MONGO["servers"][$i]["mongo_pass"] = "root password";
 $MONGO["servers"][$i]["mongo_version"] = "3.4";
