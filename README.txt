@@ -9,7 +9,7 @@ Installation
 2. Install MongoDB PHP driver (http://us.php.net/manual/en/mongodb.installation.php)
 3. Run "git clone git@github.com:viktor-poltorak/rockmongo.git"
 5. Open the config.php with your convenient editor, change host, port, admins and so on to yours
-6. Install comproser (https://getcomposer.org/doc/00-intro.md)
+6. Install composer (https://getcomposer.org/doc/00-intro.md)
 7. Run "composer install"
 8. Visit the index.php in your browser, for example: http://localhost/rockmongo/index.php
 9. Login with admin username and password, which is set "admin" and "admin" as default
