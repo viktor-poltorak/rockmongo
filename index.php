@@ -12,7 +12,7 @@ require_once './vendor/autoload.php';
  */
 define("ROCK_MONGO_VERSION", "1.1.8");
 
-error_reporting(E_ALL);
+error_reporting(E_WARNING | E_ERROR | E_PARSE);
 
 /**
  * Environment detection
