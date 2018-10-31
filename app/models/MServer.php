@@ -346,7 +346,7 @@ class MServer
             $server = $this->_mongoSock;
         } else {//connect through host:port
             $server = $this->_mongoHost;
-            if (!$this->_mongoPort) {
+            if ($this->_mongoPort) {
                 $server .= ":" . $this->_mongoPort;
             }
         }
